@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<htm>
+
+    <head>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>YACE</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.1/css/bulma.min.css">
+    </head>
+
+    <body>
+        <div class="container">
+            <h1 class="is-size-1 has-text-weight-bold">YACE</h1>
+            <div class="field is-grouped">
+                <div class="control">
+                    <label class="label">Seleziona file</label>
+                    <input class="input" type="file" id=file />
+                </div>
+                <div class="control">
+                    <label class="label">Separatore</label>
+                    <span class="select">
+                        <select id=separatore>
+                            <option selected value=",">,</option>
+                            <option value=";">;</option>
+                            <option value="|">|</option>
+                            <option value="\t">tab</option>
+                        </select>
+                    </span>
+                </div>
+            </div>
+            <button class="button" value="Carica" id=btnCarica>Carica</button>
+
+            <table id=csv class="table">
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+
+        <script src="js/TokenType.js"></script>
+        <script src="js/Token.js"></script>
+        <script src="js/Scanner.js"></script>
+        <script src="js/Parser.js"></script>
+        <script src="js/yace.js"></script>
+    </body>
+</htm>
