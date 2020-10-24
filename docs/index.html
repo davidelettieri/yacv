@@ -1,39 +1,57 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>YACE</title>
-        <link rel="stylesheet" href="css/bulma.min.css">
-    </head>
-    <body>
-        <div class="container">
-            <h1 class="is-size-1 has-text-weight-bold">YACV</h1>
-            <h2 class="is-size-3">Yet Another Csv Viewer</h2>
-            <div class="field is-grouped">
-                <div class="control">
-                    <label class="label">Open a file</label>
-                    <input class="input" type="file" id=file accept=".csv" />
-                </div>
-                <div class="control">
-                    <label class="label">Delimiter</label>
-                    <span class="select">
-                        <select id=separatore>
-                            <option selected value=",">,</option>
-                            <option value=";">;</option>
-                            <option value="|">|</option>
-                            <option value="\t">tab</option>
-                        </select>
-                    </span>
-                </div>
-            </div>
-            <button class="button" value="Carica" id=btnCarica>Load</button>
-            <table id=csv class="table">
-                <tbody>
 
-                </tbody>
-            </table>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>YACE</title>
+    <link rel="stylesheet" href="css/bulma.min.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1 class="is-size-1 has-text-weight-bold">YACV</h1>
+        <h2 class="is-size-3">Yet Another Csv Viewer</h2>
+        <article class="message is-dark">
+            <div class="message-body">
+                <p>A simple - recursive descent - parser for CSV files. The grammar is based on <a
+                        href="https://tools.ietf.org/html/rfc4180">rfc4180</a> and the parser is just a couple of hours
+                    of work, be kind! Default delimiter is ',' but you can choose between a few different delimiters.
+                    For example, when exporting a csv with MS Excel in italian the delimiter is a ';'.</p>
+                <br>
+                <p>
+                    If you have any suggestion or you want to file a bug, please open an issue <a
+                        href="https://github.com/davidelettieri/yacv/issues">here</a>.
+                </p>
+            </div>
+        </article>
+        <div class="field is-grouped">
+            <div class="control">
+                <label class="label">Open a file</label>
+                <input class="input" type="file" id=file accept=".csv" />
+            </div>
+            <div class="control">
+                <label class="label">Delimiter</label>
+                <span class="select">
+                    <select id=separatore>
+                        <option selected value=",">,</option>
+                        <option value=";">;</option>
+                        <option value="|">|</option>
+                        <option value="\t">tab</option>
+                    </select>
+                </span>
+            </div>
+            <div class="control">
+                <label class="label">&nbsp;</label>
+                <button class="button" value="Carica" id=btnCarica>Load</button>
+            </div>
         </div>
-        <script src="js/parser.js"></script>
-        <script src="js/yace.js"></script>
-    </body>
+        <table id=csv class="table">
+            <tbody>
+
+            </tbody>
+        </table>
+    </div>
+    <script src="js/parser.js"></script>
+    <script src="js/yacv.js"></script>
+</body>
 </htm>
