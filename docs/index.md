@@ -1,12 +1,10 @@
 <!DOCTYPE html>
-<htm>
-
+<html>
     <head>
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>YACE</title>
         <link rel="stylesheet" href="css/bulma.min.css">
     </head>
-
     <body>
         <div class="container">
             <h1 class="is-size-1 has-text-weight-bold">YACV</h1>
@@ -35,7 +33,6 @@
                 </tbody>
             </table>
         </div>
-
         <script src="js/parser.js"></script>
         <script src="js/yace.js"></script>
     </body>
