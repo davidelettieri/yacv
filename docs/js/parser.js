@@ -114,7 +114,7 @@ var Parser = /** @class */ (function () {
         while (this.Match(TokenType.COMMA)) {
             record.push(this.Field());
         }
-        if (!this.Match(TokenType.CR_LF, TokenType.LF)) {
+        if (!this.Match(TokenType.CR_LF, TokenType.LF, TokenType.CR)) {
             throw this.GetError(this.Previous(), "Expect crlf or lf after record.");
         }
         return record;

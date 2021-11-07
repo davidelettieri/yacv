@@ -136,8 +136,10 @@ class Parser {
             record.push(this.Field());
         }
 
-        if (!this.Match(TokenType.CR_LF, TokenType.LF)) {
-            throw this.GetError(this.Previous(), "Expect crlf or lf after record.");
+        // In RFC 4180 each record is delimited by a line break CRLF
+        // we support also ending a record line with LF or CR
+        if (!this.Match(TokenType.CR_LF, TokenType.LF, TokenType.CR)) {
+            throw this.GetError(this.Previous(), "Expect crlf, lf, cr after record.");
         }
 
 
