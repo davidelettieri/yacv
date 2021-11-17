@@ -59,6 +59,8 @@ class Scanner {
 
         switch (c) {
             case this._delimiter: this.AddToken(TokenType.COMMA); break;
+            case ' ':
+                break;
             case '"':
                 if (this.Peek() == '"') {
                     this.Advance();
@@ -124,6 +126,12 @@ class Parser {
 
         while (!this.IsAtEnd()) {
             rows.push(this.Record());
+
+            // In RFC 4180 each record is delimited by a line break CRLF
+            // we support also ending a record line with LF or CR
+            if (!this.Match(TokenType.CR_LF, TokenType.LF, TokenType.CR)) {
+                throw this.GetError(this.Previous(), "Expect crlf, lf, cr after record.");
+            }
         }
 
         return rows;
@@ -136,24 +144,16 @@ class Parser {
             record.push(this.Field());
         }
 
-        // In RFC 4180 each record is delimited by a line break CRLF
-        // we support also ending a record line with LF or CR
-        if (!this.Match(TokenType.CR_LF, TokenType.LF, TokenType.CR)) {
-            throw this.GetError(this.Previous(), "Expect crlf, lf, cr after record.");
-        }
-
-
         return record;
     }
 
     private Field(): string {
-        var field = this.NonEscaped();
 
-        if (field == null || field.trim() == '') {
-            field = this.Escaped();
+        if (this.Match(TokenType.DQUOTE)) {
+            return this.Escaped();
         }
 
-        return field;
+        return this.NonEscaped();
     }
 
     private NonEscaped(): string {
@@ -165,23 +165,19 @@ class Parser {
     }
 
     private Escaped(): string {
-        if (this.Match(TokenType.DQUOTE)) {
-            var sb = "";
-            while (!this.IsAtEnd() && this.Peek().Type != TokenType.DQUOTE) {
-                if (this.Match(TokenType.STRING, TokenType.COMMA, TokenType.CR, TokenType.LF)) {
-                    sb = sb.concat(this.Previous().Literal);
-                }
-                else if (this.Match(TokenType.DQUOTE_DQUOTE)) {
-                    sb = sb.concat('"');
-                }
+        var sb = "";
+        while (!this.IsAtEnd() && this.Peek().Type != TokenType.DQUOTE) {
+            if (this.Match(TokenType.STRING, TokenType.COMMA, TokenType.CR, TokenType.LF)) {
+                sb = sb.concat(this.Previous().Literal);
             }
-
-            this.Advance();
-
-            return sb;
+            else if (this.Match(TokenType.DQUOTE_DQUOTE)) {
+                sb = sb.concat('"');
+            }
         }
 
-        return null;
+        this.Advance();
+
+        return sb;
     }
 
     private Match(...types: TokenType[]): boolean {
@@ -224,7 +220,6 @@ class Parser {
 class ParseError {
     name: string;
     message: string;
-    stack?: string;
     constructor(token: Token, message: string) {
     }
 }
