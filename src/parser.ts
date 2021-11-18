@@ -216,10 +216,3 @@ class Parser {
         return new Error(`[line ${token.Line} ] Error at ${token.Literal}: ${message}`);
     }
 }
-
-class ParseError {
-    name: string;
-    message: string;
-    constructor(token: Token, message: string) {
-    }
-}

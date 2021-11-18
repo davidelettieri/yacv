@@ -185,9 +185,4 @@ var Parser = /** @class */ (function () {
     };
     return Parser;
 }());
-var ParseError = /** @class */ (function () {
-    function ParseError(token, message) {
-    }
-    return ParseError;
-}());
 //# sourceMappingURL=parser.js.map
