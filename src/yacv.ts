@@ -1,9 +1,11 @@
+import { Parser, Scanner } from "./parser.js";
+
 const file = document.getElementById('file') as HTMLInputElement;
 const csv = document.getElementById('csv') as HTMLTableElement;
-const separatore = document.getElementById('separatore') as HTMLSelectElement;
-const btnCarica = document.getElementById('btnCarica') as HTMLButtonElement;
+const separator = document.getElementById('separator') as HTMLSelectElement;
+const btnLoad = document.getElementById('btnLoad') as HTMLButtonElement;
 
-btnCarica.onclick = function () {
+btnLoad.onclick = function () {
     csv.tBodies[0].innerHTML = "";
     if (file.files && file.files.length > 0) {
         var fileUrl = file.files[0];
@@ -15,7 +17,10 @@ btnCarica.onclick = function () {
 
 function fileLoaded(event: ProgressEvent<FileReader>) {
     try {
-        var scanner = new Scanner(event.target.result as string, separatore.value);
+        if (!event.target || !event.target.result) {
+            throw new Error("File not found");
+        }
+        var scanner = new Scanner(event.target.result as string, separator.value);
         var tokens = scanner.ScanTokens();
         var parser = new Parser(tokens);
         var result = parser.Parse();
@@ -24,7 +29,12 @@ function fileLoaded(event: ProgressEvent<FileReader>) {
     catch (error) {
         var tr = document.createElement('tr');
         var td = document.createElement('td');
-        td.innerHTML = error.message;
+        if (error instanceof Error) {
+            td.innerHTML = error.message;
+        }
+        else {
+            td.innerHTML = "Unknown error";
+        }
         tr.appendChild(td);
         tr.classList.add('has-background-danger');
         csv.tBodies[0].appendChild(tr);

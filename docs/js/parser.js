@@ -9,11 +9,11 @@ var TokenType;
     TokenType[TokenType["DQUOTE_DQUOTE"] = 6] = "DQUOTE_DQUOTE";
     TokenType[TokenType["EOF"] = 7] = "EOF";
 })(TokenType || (TokenType = {}));
-var Token = /** @class */ (function () {
+class Token {
     /**
      *
      */
-    function Token(type, literal, line) {
+    constructor(type, literal, line) {
         this.Type = type;
         this.Literal = literal;
         this.Line = line;
@@ -21,13 +21,12 @@ var Token = /** @class */ (function () {
     /**
      * ToString
      */
-    Token.prototype.ToString = function () {
-        return this.Type + " " + this.Literal + " " + this.Line;
-    };
-    return Token;
-}());
-var Scanner = /** @class */ (function () {
-    function Scanner(source, delimiter) {
+    ToString() {
+        return `${this.Type} ${this.Literal} ${this.Line}`;
+    }
+}
+export class Scanner {
+    constructor(source, delimiter) {
         this._tokens = [];
         this._start = 0;
         this._current = 0;
@@ -35,15 +34,15 @@ var Scanner = /** @class */ (function () {
         this._source = source;
         this._delimiter = delimiter;
     }
-    Scanner.prototype.ScanTokens = function () {
+    ScanTokens() {
         while (!this.IsAtEnd()) {
             this._start = this._current;
             this.ScanToken();
         }
-        this._tokens.push(new Token(TokenType.EOF, "end", this._line));
+        this._tokens.push(new Token(TokenType.EOF, "EOF", this._line));
         return this._tokens;
-    };
-    Scanner.prototype.ScanToken = function () {
+    }
+    ScanToken() {
         var c = this.Advance();
         switch (c) {
             case this._delimiter:
@@ -74,68 +73,67 @@ var Scanner = /** @class */ (function () {
                 this.Text();
                 break;
         }
-    };
-    Scanner.prototype.Text = function () {
+    }
+    Text() {
         while (Scanner._reserved.indexOf(this.Peek()) == -1 && this.Peek() != this._delimiter)
             this.Advance();
         this.AddToken(TokenType.STRING);
-    };
-    Scanner.prototype.Peek = function () {
+    }
+    Peek() {
         if (this.IsAtEnd()) {
             return '\0';
         }
         return this._source[this._current];
-    };
-    Scanner.prototype.IsAtEnd = function () {
+    }
+    IsAtEnd() {
         return this._current >= this._source.length;
-    };
-    Scanner.prototype.Advance = function () {
+    }
+    Advance() {
         this._current++;
         return this._source[this._current - 1];
-    };
-    Scanner.prototype.AddToken = function (type) {
+    }
+    AddToken(type) {
         this._tokens.push(new Token(type, this._source.substring(this._start, this._current), this._line));
-    };
-    Scanner._reserved = ['"', '\r', '\n', '\0'];
-    return Scanner;
-}());
-var Parser = /** @class */ (function () {
-    function Parser(tokens) {
+    }
+}
+Scanner._reserved = ['"', '\r', '\n', '\0'];
+export class Parser {
+    constructor(tokens) {
         this._current = 0;
         this._tokens = tokens;
     }
-    Parser.prototype.Parse = function () {
+    Parse() {
         var rows = [];
         while (!this.IsAtEnd()) {
             rows.push(this.Record());
             // In RFC 4180 each record is delimited by a line break CRLF
             // we support also ending a record line with LF or CR
-            if (!this.Match(TokenType.CR_LF, TokenType.LF, TokenType.CR)) {
-                throw this.GetError(this.Previous(), "Expect crlf, lf, cr after record.");
+            if (!this.Match(TokenType.CR_LF, TokenType.LF, TokenType.CR) && !this.IsAtEnd()) {
+                throw this.GetError(this.Previous(), "Expect crlf, lf, cr, EOF after record.");
             }
         }
         return rows;
-    };
-    Parser.prototype.Record = function () {
+    }
+    Record() {
         var record = [this.Field()];
         while (this.Match(TokenType.COMMA)) {
             record.push(this.Field());
         }
         return record;
-    };
-    Parser.prototype.Field = function () {
+    }
+    Field() {
         if (this.Match(TokenType.DQUOTE)) {
             return this.Escaped();
         }
         return this.NonEscaped();
-    };
-    Parser.prototype.NonEscaped = function () {
+    }
+    NonEscaped() {
         if (this.Match(TokenType.STRING)) {
             return this.Previous().Literal;
         }
         return "";
-    };
-    Parser.prototype.Escaped = function () {
+    }
+    Escaped() {
         var sb = "";
         while (!this.IsAtEnd() && this.Peek().Type != TokenType.DQUOTE) {
             if (this.Match(TokenType.STRING, TokenType.COMMA, TokenType.CR, TokenType.LF)) {
@@ -147,12 +145,8 @@ var Parser = /** @class */ (function () {
         }
         this.Advance();
         return sb;
-    };
-    Parser.prototype.Match = function () {
-        var types = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            types[_i] = arguments[_i];
-        }
+    }
+    Match(...types) {
         for (var i = 0; i < types.length; i++) {
             if (this.Check(types[i])) {
                 this.Advance();
@@ -160,29 +154,27 @@ var Parser = /** @class */ (function () {
             }
         }
         return false;
-    };
-    Parser.prototype.Check = function (type) {
+    }
+    Check(type) {
         if (this.IsAtEnd())
             return false;
         return this.Peek().Type == type;
-    };
-    Parser.prototype.Advance = function () {
+    }
+    Advance() {
         if (!this.IsAtEnd())
             this._current++;
         return this.Previous();
-    };
-    Parser.prototype.IsAtEnd = function () {
+    }
+    IsAtEnd() {
         return this.Peek().Type == TokenType.EOF;
-    };
-    Parser.prototype.Peek = function () {
+    }
+    Peek() {
         return this._tokens[this._current];
-    };
-    Parser.prototype.Previous = function () {
+    }
+    Previous() {
         return this._tokens[this._current - 1];
-    };
-    Parser.prototype.GetError = function (token, message) {
-        return new Error("[line " + token.Line + " ] Error at " + token.Literal + ": " + message);
-    };
-    return Parser;
-}());
-//# sourceMappingURL=parser.js.map
+    }
+    GetError(token, message) {
+        return new Error(`[line ${token.Line} ] Error at ${token.Literal}: ${message}`);
+    }
+}
