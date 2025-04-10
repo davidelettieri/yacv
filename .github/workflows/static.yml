@@ -22,7 +22,10 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build-and-test:
+  build-and-test-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -37,23 +40,14 @@ jobs:
         run: npm test
       - name: Build
         run: npx tsc
-  # Single deploy job since we're just deploying
-  deploy:
-    needs: build-and-test
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          # Upload entire repository
+          # Upload docs directory
           path: 'docs/.'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
