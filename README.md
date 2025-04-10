@@ -1,5 +1,5 @@
 # yacv
-Yet Another Csv Viewer
+Yet Another Csv Viewer, demo at https://davidelettieri.github.io/yacv/
 
 to build: `npx tsc`
 to test: `node test`
