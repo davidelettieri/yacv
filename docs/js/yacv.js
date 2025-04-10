@@ -1,19 +1,23 @@
-var file = document.getElementById('file');
-var csv = document.getElementById('csv');
-var separatore = document.getElementById('separatore');
-var btnCarica = document.getElementById('btnCarica');
-btnCarica.onclick = function () {
+import { Parser, Scanner } from "./parser";
+const file = document.getElementById('file');
+const csv = document.getElementById('csv');
+const separator = document.getElementById('separator');
+const btnLoad = document.getElementById('btnLoad');
+btnLoad.onclick = function () {
     csv.tBodies[0].innerHTML = "";
     if (file.files && file.files.length > 0) {
         var fileUrl = file.files[0];
-        var reader = new FileReader();
+        const reader = new FileReader();
         reader.addEventListener('load', fileLoaded);
         reader.readAsText(fileUrl);
     }
 };
 function fileLoaded(event) {
     try {
-        var scanner = new Scanner(event.target.result, separatore.value);
+        if (!event.target || !event.target.result) {
+            throw new Error("File not found");
+        }
+        var scanner = new Scanner(event.target.result, separator.value);
         var tokens = scanner.ScanTokens();
         var parser = new Parser(tokens);
         var result = parser.Parse();
@@ -22,7 +26,12 @@ function fileLoaded(event) {
     catch (error) {
         var tr = document.createElement('tr');
         var td = document.createElement('td');
-        td.innerHTML = error.message;
+        if (error instanceof Error) {
+            td.innerHTML = error.message;
+        }
+        else {
+            td.innerHTML = "Unknown error";
+        }
         tr.appendChild(td);
         tr.classList.add('has-background-danger');
         csv.tBodies[0].appendChild(tr);
@@ -40,4 +49,3 @@ function buildTable(rows) {
         csv.tBodies[0].appendChild(tr);
     }
 }
-//# sourceMappingURL=yacv.js.map

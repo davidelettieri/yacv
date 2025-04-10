@@ -30,7 +30,7 @@ class Token {
     }
 }
 
-class Scanner {
+export class Scanner {
     private readonly _source: string
     private readonly _tokens: Token[] = []
     private readonly _delimiter: string
@@ -50,7 +50,7 @@ class Scanner {
             this.ScanToken();
         }
 
-        this._tokens.push(new Token(TokenType.EOF, "end", this._line));
+        this._tokens.push(new Token(TokenType.EOF, "EOF", this._line));
         return this._tokens;
     }
 
@@ -113,7 +113,7 @@ class Scanner {
     }
 }
 
-class Parser {
+export class Parser {
     private readonly _tokens: Token[]
     private _current = 0
 
@@ -129,8 +129,8 @@ class Parser {
 
             // In RFC 4180 each record is delimited by a line break CRLF
             // we support also ending a record line with LF or CR
-            if (!this.Match(TokenType.CR_LF, TokenType.LF, TokenType.CR)) {
-                throw this.GetError(this.Previous(), "Expect crlf, lf, cr after record.");
+            if (!this.Match(TokenType.CR_LF, TokenType.LF, TokenType.CR) && !this.IsAtEnd()) {
+                throw this.GetError(this.Previous(), "Expect crlf, lf, cr, EOF after record.");
             }
         }
 
