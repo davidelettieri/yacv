@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "module": "NodeNext",
     "target": "ES6", /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */
     "outDir": "docs/js",
     "esModuleInterop": true,

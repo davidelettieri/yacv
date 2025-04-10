@@ -1,4 +1,4 @@
-import { Parser, Scanner } from "./parser";
+import { Parser, Scanner } from "./parser.js";
 const file = document.getElementById('file');
 const csv = document.getElementById('csv');
 const separator = document.getElementById('separator');

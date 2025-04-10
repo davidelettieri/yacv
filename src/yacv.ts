@@ -1,4 +1,4 @@
-import { Parser, Scanner } from "./parser";
+import { Parser, Scanner } from "./parser.js";
 
 const file = document.getElementById('file') as HTMLInputElement;
 const csv = document.getElementById('csv') as HTMLTableElement;
